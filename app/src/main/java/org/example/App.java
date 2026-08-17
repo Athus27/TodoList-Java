@@ -6,6 +6,9 @@ package org.example;
 import org.example.cli.TodoConsole;
 import org.example.cli.printer.BoardPrinter;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,7 +22,8 @@ public class App {
 
     public static void main(String[] args) {
 //        mainLoop();
-        Task testTask = new Task(0,1,"TaskTeste","desc1","xx/xx/xx","yy/yy/yy");
+        Task testTask = new Task(0,1,"TaskTeste","desc1","12/08/2026");
+        System.out.println(isDataValid(testTask.getTarget_data()));
         Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
         TodoConsole todoConsole = new TodoConsole();
 
@@ -34,6 +38,9 @@ public class App {
             // Exemplo de uso com o seu BoardPrinter
             BoardPrinter.printSection(nomeSecao, listaTarefas);
         }
+
+        LocalDate createDate=LocalDate.now();
+        System.out.println("Create date: " + createDate);
     }
 
     public static void mainLoop() {
@@ -51,6 +58,7 @@ public class App {
                     break;
                 case 2:
                     listTasks(MainBoard);
+                    scanner.nextLine();
                     break;
                 case 3:
                     break;
@@ -77,9 +85,19 @@ public class App {
         int taskPriority = scanner.nextInt();
         System.out.println("Enter the target date: ");
         String targetDate = scanner.nextLine();
+        if(!isDataValid(targetDate)) {
+            while (true) {
+                System.out.println("Invalid date format, try again:");
+                targetDate = scanner.nextLine();
+                if (isDataValid(targetDate)) {
+                    break;
+                }
+            }
+        }
 
-        Task tempTask = new Task(0, taskPriority, taskName, taskDescription,"xx/xx/xx", targetDate);
+        Task tempTask = new Task(0, taskPriority, taskName, taskDescription, targetDate);
         board.addTask(tempTask);
+        System.out.println("Task has been created");
     }
 
     public static void listTasks(Board board) {
@@ -92,4 +110,18 @@ public class App {
     }
 
 
+    public static boolean isDataValid(String data) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                    .withResolverStyle(ResolverStyle.STRICT);
+            LocalDate enteredDate = LocalDate.parse(data, formatter);
+
+            LocalDate today = LocalDate.now();
+
+            return !enteredDate.isBefore(today);
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
 }

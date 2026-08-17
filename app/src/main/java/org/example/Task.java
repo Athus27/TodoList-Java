@@ -1,5 +1,9 @@
 package org.example;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+
 public class Task {
     private int id;
     private int priority;
@@ -8,12 +12,14 @@ public class Task {
     private String create_data;
     private String target_data;
 
-    public Task(int id, int priority, String title, String description, String create_data, String target_data) {
+    public Task(int id, int priority, String title, String description, String target_data) {
+        LocalDate createDate = LocalDate.now();
+
         this.id = id;
         this.priority = priority;
         this.title = title;
         this.description = description;
-        this.create_data = create_data;
+        this.create_data = createDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.target_data = target_data;
     }
 
