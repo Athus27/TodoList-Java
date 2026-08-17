@@ -34,6 +34,26 @@ public class Board {
         tasksTodo.remove(task);
     }
 
+    /**
+     * Identifica em qual section esta a task e move para a sessão após ela
+     * Todo->Doing->Done
+     * Se a task estiver em done não é possível mover
+     * @param task
+     */
+    public void moveTask(Task task) {
+        if (this.tasksTodo.contains(task)) {
+            this.tasksTodo.remove(task);
+            this.tasksDoing.add(task);
+            System.out.printf("Moving task %s from 'ToDo' to 'Doing'%n", task.getTitle());
+        } else if (tasksDoing.contains(task)) {
+            this.tasksDoing.remove(task);
+            this.tasksDone.add(task);
+            System.out.printf("Moving task %s from 'Doing' to 'Done'%n", task.getTitle());
+
+        }
+        else System.out.println("Não é possível mover a task");
+    }
+
     public static int getCount_tasks() {
         return count_tasks;
     }
