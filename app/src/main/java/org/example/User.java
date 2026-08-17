@@ -1,4 +1,3 @@
-package org.example;
-
-public class User {
+public abstract class User {
+    private String name;
 }

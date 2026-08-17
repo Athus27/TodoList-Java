@@ -3,12 +3,93 @@
  */
 package org.example;
 
+import org.example.cli.TodoConsole;
+import org.example.cli.printer.BoardPrinter;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Scanner;
+
 public class App {
+    public static Scanner scanner = new Scanner(System.in);
+
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+//        mainLoop();
+        Task testTask = new Task(0,1,"TaskTeste","desc1","xx/xx/xx","yy/yy/yy");
+        Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
+        TodoConsole todoConsole = new TodoConsole();
+
+        MainBoard.addTask(testTask);
+        MainBoard.addTask(testTask);
+        MainBoard.addTask(testTask);
+
+        for (Map.Entry<String, ArrayList<Task>> entry : MainBoard.getTasks().entrySet()) {
+            String nomeSecao = entry.getKey();         // Ex: "tasksTodo"
+            ArrayList<Task> listaTarefas = entry.getValue(); // A lista de tarefas
+
+            // Exemplo de uso com o seu BoardPrinter
+            BoardPrinter.printSection(nomeSecao, listaTarefas);
+        }
     }
+
+    public static void mainLoop() {
+        Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
+        TodoConsole todoConsole = new TodoConsole();
+
+        int choice;
+        while (true) {
+            todoConsole.menu();
+            choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    createTask(MainBoard);
+
+                    break;
+                case 2:
+                    listTasks(MainBoard);
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 0:
+                    //break looping
+                    return;
+                default:
+                    System.out.println("Wrong choice");
+                    scanner.nextInt();
+                    break;
+            }
+        }
+    }
+
+    public static void createTask(Board board) {
+        scanner.nextLine();
+        System.out.println("Enter task name: ");
+        String taskName = scanner.nextLine();
+        System.out.println("Enter task description: ");
+        String taskDescription = scanner.nextLine();
+        System.out.println("Enter task priority: ");
+        int taskPriority = scanner.nextInt();
+        System.out.println("Enter the target date: ");
+        String targetDate = scanner.nextLine();
+
+        Task tempTask = new Task(0, taskPriority, taskName, taskDescription,"xx/xx/xx", targetDate);
+        board.addTask(tempTask);
+    }
+
+    public static void listTasks(Board board) {
+        // Acessando o HashMap que está dentro do objeto board
+        for (Map.Entry<String, ArrayList<Task>> entry : board.getTasks().entrySet()) {
+            String nomeSecao = entry.getKey();         // Ex: "tasksTodo"
+            ArrayList<Task> listaTarefas = entry.getValue(); // A lista de tarefas
+            BoardPrinter.printSection(nomeSecao, listaTarefas);
+        }
+    }
+
+
 }

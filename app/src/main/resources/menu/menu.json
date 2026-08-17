@@ -1,0 +1,36 @@
+{
+  "appName": "ToDo Application",
+  "menus": [
+    {
+      "id": "main",
+      "title": "Menu principal",
+      "items": [
+        {
+          "key": "1",
+          "label": "Criar tarefa",
+          "action": "CREATE_TASK"
+        },
+        {
+          "key": "2",
+          "label": "Listar tarefas",
+          "action": "LIST_TASKS"
+        },
+        {
+          "key": "3",
+          "label": "Atualizar tarefa",
+          "action": "UPDATE_TASK"
+        },
+        {
+          "key": "4",
+          "label": "Remover tarefa",
+          "action": "DELETE_TASK"
+        },
+        {
+          "key": "0",
+          "label": "Sair",
+          "action": "EXIT"
+        }
+      ]
+    }
+  ]
+}
