@@ -4,7 +4,9 @@ import org.example.Board;
 import org.example.Task;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BoardPrinter {
 
@@ -26,7 +28,13 @@ public class BoardPrinter {
         }
     }
 
-    public void printBoard(Board board) {
-        // imprime todo, doing, done
+    public static void printBoard(Board board) {
+        // Itera diretamente sobre o HashMap utilizando expressão lambda
+        for (Map.Entry<String, ArrayList<Task>> entry : board.getTasks().entrySet()) {
+            String key = entry.getKey();
+            ArrayList<Task> value = entry.getValue();
+            printSection(key, value);
+        }
     }
+
 }

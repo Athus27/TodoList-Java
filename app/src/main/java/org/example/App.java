@@ -21,13 +21,14 @@ public class App {
     }
 
     public static void main(String[] args) {
-//        mainLoop();
-        Task testTask = new Task(0,1,"TaskTeste","desc1","12/08/2026");
+        mainLoop();
+        Task testTask = new Task(0,1,"TaskTeste","desc1","22/10/2026");
         System.out.println(isDataValid(testTask.getTarget_data()));
         Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
         TodoConsole todoConsole = new TodoConsole();
-
         MainBoard.addTask(testTask);
+        Task out = MainBoard.findTask("TaskTeste");
+
         MainBoard.addTask(testTask);
         MainBoard.addTask(testTask);
 
@@ -45,6 +46,9 @@ public class App {
 
     public static void mainLoop() {
         Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
+        Task testTask = new Task(0,1,"TaskTeste","desc1","22/10");
+
+        MainBoard.addTask(testTask);
         TodoConsole todoConsole = new TodoConsole();
 
         int choice;
@@ -61,11 +65,44 @@ public class App {
                     scanner.nextLine();
                     break;
                 case 3:
+                    scanner.nextLine();
+                    BoardPrinter.printBoard(MainBoard);
+                while(true) {
+                    System.out.println("Please enther the name of task to update: ");
+
+                    String taskName = scanner.nextLine();
+
+                    Task tempTask = MainBoard.findTask(taskName);
+                    tempTask = MainBoard.findTask(taskName);
+
+                    MainBoard.moveTask(tempTask);
+
+                    if (tempTask != null) {
+                        break;
+                    }
+                }
                     break;
                 case 4:
+                    scanner.nextLine();
+                    BoardPrinter.printBoard(MainBoard);
+                    while(true) {
+                        System.out.println("Please enther the name of task to remove: ");
+
+                        String taskName = scanner.nextLine();
+
+                        Task tempTask = MainBoard.findTask(taskName);
+                        tempTask = MainBoard.findTask(taskName);
+
+                        MainBoard.removeTask(tempTask);
+
+                        if (tempTask != null) {
+                            break;
+                        }
+                    }
                     break;
                 case 0:
                     //break looping
+                    System.out.println("Saindo...");
                     return;
                 default:
                     System.out.println("Wrong choice");

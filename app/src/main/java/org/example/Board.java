@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Board {
     private static int count_tasks = 0;
@@ -126,6 +127,25 @@ public class Board {
         this.tasks = tasks;
     }
 
+    /**
+     * Dado um titulo de task, percorre o conjunto <SecName->section> em busca da tarefa
+     * Map não implementa a interface 'Iterable', ou seja, o for exig
+     * @param title
+     * @return Task
+     */
+    public Task findTask(String title) {
+        for (Map.Entry<String, ArrayList<Task>> entry : tasks.entrySet()) {
+            String sectionName = entry.getKey();
+            ArrayList<Task> tasks = entry.getValue();
+            for (Task task : tasks) {
+                if (task.getTitle().equals(title)) {
+                    System.out.println("found task " + title + " on section " + sectionName);
+                    return task;
+                }
 
-
+            }
+        }
+        System.out.println("Task not found");
+        return null;
+    }
 }
