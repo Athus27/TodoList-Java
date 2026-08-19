@@ -6,7 +6,7 @@ package org.example;
 import org.example.cli.TodoConsole;
 import org.example.cli.printer.BoardPrinter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
@@ -22,26 +22,6 @@ public class App {
 
     public static void main(String[] args) {
         mainLoop();
-        Task testTask = new Task(0,1,"TaskTeste","desc1","22/10/2026");
-        System.out.println(isDataValid(testTask.getTarget_data()));
-        Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
-        TodoConsole todoConsole = new TodoConsole();
-        MainBoard.addTask(testTask);
-        Task out = MainBoard.findTask("TaskTeste");
-
-        MainBoard.addTask(testTask);
-        MainBoard.addTask(testTask);
-
-        for (Map.Entry<String, ArrayList<Task>> entry : MainBoard.getTasks().entrySet()) {
-            String nomeSecao = entry.getKey();         // Ex: "tasksTodo"
-            ArrayList<Task> listaTarefas = entry.getValue(); // A lista de tarefas
-
-            // Exemplo de uso com o seu BoardPrinter
-            BoardPrinter.printSection(nomeSecao, listaTarefas);
-        }
-
-        LocalDate createDate=LocalDate.now();
-        System.out.println("Create date: " + createDate);
     }
 
     public static void mainLoop() {
@@ -61,8 +41,7 @@ public class App {
 
                     break;
                 case 2:
-                    listTasks(MainBoard);
-                    scanner.nextLine();
+                    listTasksMenu(MainBoard);
                     break;
                 case 3:
                     scanner.nextLine();
@@ -120,7 +99,10 @@ public class App {
         String taskDescription = scanner.nextLine();
         System.out.println("Enter task priority: ");
         int taskPriority = scanner.nextInt();
-        System.out.println("Enter the target date: ");
+        scanner.nextLine();
+        System.out.println("Enter task category: ");
+        String taskCategory = scanner.nextLine();
+        System.out.println("Enter the target date (dd/MM/yyyy HH:mm): ");
         String targetDate = scanner.nextLine();
         if(!isDataValid(targetDate)) {
             while (true) {
@@ -132,9 +114,73 @@ public class App {
             }
         }
 
-        Task tempTask = new Task(0, taskPriority, taskName, taskDescription, targetDate);
+        Task tempTask = new Task(0, taskPriority, taskName, taskDescription, targetDate, taskCategory);
         board.addTask(tempTask);
         System.out.println("Task has been created");
+    }
+
+    public static void listTasksMenu(Board board) {
+        scanner.nextLine();
+
+        System.out.println("Listar tarefas");
+        System.out.println("[1] - Todas");
+        System.out.println("[2] - Por status");
+        System.out.println("[3] - Por prioridade");
+        System.out.println("[4] - Por categoria");
+        System.out.println("[0] - Voltar");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                listTasks(board);
+                break;
+            case 2:
+                listTasksByStatus(board);
+                break;
+            case 3:
+                BoardPrinter.printSection("Tasks by priority", board.getTasksByPriority());
+                break;
+            case 4:
+                System.out.println("Enter category: ");
+                String category = scanner.nextLine();
+                BoardPrinter.printSection("Category: " + category, board.getTasksByCategory(category));
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Wrong choice");
+                break;
+        }
+    }
+
+    public static void listTasksByStatus(Board board) {
+        System.out.println("Escolha o status");
+        System.out.println("[1] - To Do");
+        System.out.println("[2] - Doing");
+        System.out.println("[3] - DOne");
+        System.out.println("[0] - Voltar");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                BoardPrinter.printSection("To Do", board.getTasksByStatus("To Do"));
+                break;
+            case 2:
+                BoardPrinter.printSection("Doing", board.getTasksByStatus("Doing"));
+                break;
+            case 3:
+                BoardPrinter.printSection("DOne", board.getTasksByStatus("DOne"));
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Wrong choice");
+                break;
+        }
     }
 
     public static void listTasks(Board board) {
@@ -149,11 +195,11 @@ public class App {
 
     public static boolean isDataValid(String data) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm")
                     .withResolverStyle(ResolverStyle.STRICT);
-            LocalDate enteredDate = LocalDate.parse(data, formatter);
+            LocalDateTime enteredDate = LocalDateTime.parse(data, formatter);
 
-            LocalDate today = LocalDate.now();
+            LocalDateTime today = LocalDateTime.now();
 
             return !enteredDate.isBefore(today);
         } catch (Exception e) {

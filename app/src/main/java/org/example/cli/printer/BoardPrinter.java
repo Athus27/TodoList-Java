@@ -16,8 +16,10 @@ public class BoardPrinter {
                     "\tTask\n" +
                     "\t\tName: %s\n" +
                     "\t\tDescription: %s\n" +
+                    "\t\tPriority: %d\n" +
+                    "\t\tCategory: %s\n" +
                     "\t\tTarget: %s\n",
-                task.getTitle(), task.getDescription(), task.getTarget_data())
+                task.getTitle(), task.getDescription(), task.getPriority(), task.getCategory(), task.getTarget_data())
         );
     }
 

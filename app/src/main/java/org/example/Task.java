@@ -11,8 +11,13 @@ public class Task {
     private String description;
     private String create_data;
     private String target_data;
+    private String category;
 
     public Task(int id, int priority, String title, String description, String target_data) {
+        this(id, priority, title, description, target_data, "Sem categoria");
+    }
+
+    public Task(int id, int priority, String title, String description, String target_data, String category) {
         LocalDate createDate = LocalDate.now();
 
         this.id = id;
@@ -21,6 +26,7 @@ public class Task {
         this.description = description;
         this.create_data = createDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.target_data = target_data;
+        this.category = category;
     }
 
     public int getId() {
@@ -69,5 +75,13 @@ public class Task {
 
     public void setTarget_data(String target_data) {
         this.target_data = target_data;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

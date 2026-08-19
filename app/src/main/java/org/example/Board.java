@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +33,11 @@ public class Board {
     }
 
     public void removeTask(Task task) {
-        tasksTodo.remove(task);
+        for (ArrayList<Task> taskList : tasks.values()) {
+            if (taskList.remove(task)) {
+                return;
+            }
+        }
     }
 
     /**
@@ -125,6 +130,44 @@ public class Board {
 
     public void setTasks(HashMap<String, ArrayList<Task>> tasks) {
         this.tasks = tasks;
+    }
+
+    public ArrayList<Task> getAllTasks() {
+        ArrayList<Task> allTasks = new ArrayList<>();
+
+        for (ArrayList<Task> taskList : tasks.values()) {
+            allTasks.addAll(taskList);
+        }
+
+        return allTasks;
+    }
+
+    public ArrayList<Task> getTasksByPriority() {
+        ArrayList<Task> allTasks = getAllTasks();
+        allTasks.sort(Comparator.comparingInt(Task::getPriority).reversed());
+        return allTasks;
+    }
+
+    public ArrayList<Task> getTasksByCategory(String category) {
+        ArrayList<Task> filteredTasks = new ArrayList<>();
+
+        for (Task task : getAllTasks()) {
+            if (task.getCategory().equalsIgnoreCase(category)) {
+                filteredTasks.add(task);
+            }
+        }
+
+        return filteredTasks;
+    }
+
+    public ArrayList<Task> getTasksByStatus(String status) {
+        ArrayList<Task> tasksByStatus = tasks.get(status);
+
+        if (tasksByStatus == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(tasksByStatus);
     }
 
     /**
