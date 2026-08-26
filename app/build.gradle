@@ -37,3 +37,8 @@ application {
     // Define the main class for the application.
     mainClass = 'org.example.App'
 }
+
+// configura para rodar no terminal sem a exceção que lançada por n encontrar linha
+tasks.named('run') {
+    standardInput = System.in
+}

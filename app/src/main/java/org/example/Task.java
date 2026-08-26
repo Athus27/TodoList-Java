@@ -4,22 +4,23 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 
+import java.time.LocalDateTime;
+
 public class Task {
     private int id;
     private int priority;
     private String title;
     private String description;
+
     private String target_data;
+    private LocalDateTime alarmTime;
+    private boolean alarmTriggered;
+
     private String category;
     private String section;
 
     /**
      * Inicializa Task sem Categoria
-     * @param id
-     * @param priority
-     * @param title
-     * @param description
-     * @param target_data
      */
     public Task(int id, int priority, String title, String description, String target_data) {
         this(id, priority, title, description, target_data, "Sem categoria","ToDo");
@@ -31,12 +32,6 @@ public class Task {
 
     /**
      * Inicializa task com Categoria
-     * @param id
-     * @param priority
-     * @param title
-     * @param description
-     * @param target_data
-     * @param category
      */
     public Task(int id, int priority, String title, String description, String target_data, String category, String section) {
         LocalDate createDate = LocalDate.now();
@@ -48,6 +43,8 @@ public class Task {
         this.target_data = target_data;
         this.category = category;
         this.section = section;
+        this.alarmTime = null;
+        this.alarmTriggered = false;
     }
 
     public int getId() {
@@ -104,5 +101,21 @@ public class Task {
 
     public void setSection(String section) {
         this.section = section;
+    }
+
+    public LocalDateTime getAlarmTime() {
+        return alarmTime;
+    }
+
+    public void setAlarmTime(LocalDateTime alarmTime) {
+        this.alarmTime = alarmTime;
+    }
+
+    public boolean isAlarmTriggered() {
+        return alarmTriggered;
+    }
+
+    public void setAlarmTriggered(boolean alarmTriggered) {
+        this.alarmTriggered = alarmTriggered;
     }
 }

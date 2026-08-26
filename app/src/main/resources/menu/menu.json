@@ -26,6 +26,11 @@
           "action": "DELETE_TASK"
         },
         {
+          "key": "5",
+          "label": "Alarme",
+          "action": "ALARM"
+        },
+        {
           "key": "0",
           "label": "Sair",
           "action": "EXIT"

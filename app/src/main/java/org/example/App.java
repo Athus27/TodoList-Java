@@ -26,15 +26,19 @@ public class App {
 
     public static void mainLoop() {
         Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
-        Task testTask = new Task(0, 1, "TaskTeste", "desc1", "22/10");
+        Task testTask = new Task(0, 1, "TaskTeste", "desc1", "23/12/2026 12:00", "CategoriaTeste");
 
         MainBoard.addTask(testTask);
         TodoConsole todoConsole = new TodoConsole();
 
+        Thread alarmThread = new Thread(new Alarm(MainBoard, 1000));
+        alarmThread.setDaemon(true);
+        alarmThread.start();
+
         int choice;
         while (true) {
             todoConsole.menu();
-            choice = scanner.nextInt();
+            choice = readInt();
             switch (choice) {
                 case 1:
                     createTask(MainBoard);
@@ -79,13 +83,15 @@ public class App {
                         }
                     }
                     break;
+                case 5:
+                    alarmMenu(MainBoard);
+                    break;
                 case 0:
                     //break looping
                     System.out.println("Saindo...");
                     return;
                 default:
                     System.out.println("Wrong choice");
-                    scanner.nextInt();
                     break;
             }
         }
@@ -98,7 +104,7 @@ public class App {
         System.out.println("Enter task description: ");
         String taskDescription = scanner.nextLine();
         System.out.println("Enter task priority: ");
-        int taskPriority = scanner.nextInt();
+        int taskPriority = readInt();
         scanner.nextLine();
         System.out.println("Enter task category: ");
         String taskCategory = scanner.nextLine();
@@ -131,7 +137,7 @@ public class App {
 
         try {
 
-            int choice = scanner.nextInt();
+            int choice = readInt();
             scanner.nextLine();
 
             switch (choice) {
@@ -168,7 +174,7 @@ public class App {
         System.out.println("[3] - Done");
         System.out.println("[0] - Voltar");
 
-        int choice = scanner.nextInt();
+        int choice = readInt();
         scanner.nextLine();
 
         switch (choice) {
@@ -193,7 +199,21 @@ public class App {
         BoardPrinter.printBoard(board);
     }
 
+    public static int readInt() {
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine();
+        }
 
+        return scanner.nextInt();
+    }
+
+    /**
+     * dado uma data no formato dd/MM/yyyy HH:mm, verifica se a data é válida e se é maior ou igual a data atual
+     *
+     * @param data
+     * @return
+     */
     public static boolean isDataValid(String data) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm")
@@ -207,5 +227,95 @@ public class App {
             return false;
         }
 
+    }
+
+    /**
+     * dado uma data no formato LocalDateTime, verifica se a data é maior ou igual a data atual
+     *
+     * @param data
+     * @return
+     */
+    public static boolean isDataValid(LocalDateTime data) {
+        try {
+            LocalDateTime today = LocalDateTime.now();
+
+            return !data.isBefore(today);
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    public static void alarmMenu(Board board) {
+        System.out.println("[1] - Criar alarme");
+        System.out.println("[2] - Listar alarmes");
+        System.out.println("[0] - Voltar");
+
+        int choice = readInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                System.out.println("Insira o nome da task que deseja adicionar o alarme: ");
+                String taskName = scanner.nextLine();
+                Task task = board.findTask(taskName);
+                if (task == null) {
+                    System.out.println("Tarefa não encontrada");
+                    return;
+                }
+
+                if (task.getAlarmTime() != null) {
+                    System.out.println("Ja existe um alarme para essa tarefa:\n" + task.getAlarmTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                    return;
+                }
+
+                if (task.getSection().equals("Done")) {
+                    System.out.println("Não é possível adicionar alarme para tarefas concluídas.");
+                    return;
+                }
+                BoardPrinter.printTask(task);
+
+                System.out.println("Quantos minutos antes da task deseja receber o alarme? ");
+
+                int minutesBefore = readInt();
+                while (minutesBefore <=0){
+                    System.out.println("O valor deve ser maior que 0, tente novamente: ");
+                    minutesBefore = readInt();
+                }
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm")
+                        .withResolverStyle(ResolverStyle.STRICT);
+                LocalDateTime targetDate = LocalDateTime.parse(task.getTarget_data(), formatter);
+                LocalDateTime alarmTime = targetDate.minusMinutes(minutesBefore);
+
+                if (isDataValid(alarmTime)) {
+                    task.setAlarmTime(alarmTime);
+                    System.out.println("Alarme configurado para: " + alarmTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                } else {
+                    System.out.println("Alarme não pode ser configurado para uma data passada.");
+                    return;
+                }
+                break;
+            case 2:
+                boolean hasAlarms = false;
+                // Listar alarmes
+                for (Task currentTask : board.getAllTasks()) {
+                    if (currentTask.getAlarmTime() != null) {
+                        BoardPrinter.printTask(currentTask);
+                        hasAlarms = true;
+                    }
+                }
+                if (!hasAlarms) {
+                    System.out.println("Nenhum alarme encontrado.");
+                }
+
+                break;
+            case 0:
+                // Voltar
+                break;
+            default:
+                System.out.println("Wrong choice");
+                break;
+        }
     }
 }
