@@ -9,24 +9,45 @@ public class Task {
     private int priority;
     private String title;
     private String description;
-    private String create_data;
     private String target_data;
     private String category;
+    private String section;
 
+    /**
+     * Inicializa Task sem Categoria
+     * @param id
+     * @param priority
+     * @param title
+     * @param description
+     * @param target_data
+     */
     public Task(int id, int priority, String title, String description, String target_data) {
-        this(id, priority, title, description, target_data, "Sem categoria");
+        this(id, priority, title, description, target_data, "Sem categoria","ToDo");
     }
 
     public Task(int id, int priority, String title, String description, String target_data, String category) {
+        this(id, priority, title, description, target_data, category, "ToDo");
+    }
+
+    /**
+     * Inicializa task com Categoria
+     * @param id
+     * @param priority
+     * @param title
+     * @param description
+     * @param target_data
+     * @param category
+     */
+    public Task(int id, int priority, String title, String description, String target_data, String category, String section) {
         LocalDate createDate = LocalDate.now();
 
         this.id = id;
         this.priority = priority;
         this.title = title;
         this.description = description;
-        this.create_data = createDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.target_data = target_data;
         this.category = category;
+        this.section = section;
     }
 
     public int getId() {
@@ -61,14 +82,6 @@ public class Task {
         this.description = description;
     }
 
-    public String getCreate_data() {
-        return create_data;
-    }
-
-    public void setCreate_data(String create_data) {
-        this.create_data = create_data;
-    }
-
     public String getTarget_data() {
         return target_data;
     }
@@ -83,5 +96,13 @@ public class Task {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 }

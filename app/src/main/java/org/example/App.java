@@ -26,7 +26,7 @@ public class App {
 
     public static void mainLoop() {
         Board MainBoard = new Board(0, 1, "Main Board", "Geral tasks");
-        Task testTask = new Task(0,1,"TaskTeste","desc1","22/10");
+        Task testTask = new Task(0, 1, "TaskTeste", "desc1", "22/10");
 
         MainBoard.addTask(testTask);
         TodoConsole todoConsole = new TodoConsole();
@@ -46,25 +46,25 @@ public class App {
                 case 3:
                     scanner.nextLine();
                     BoardPrinter.printBoard(MainBoard);
-                while(true) {
-                    System.out.println("Please enther the name of task to update: ");
+                    while (true) {
+                        System.out.println("Please enther the name of task to update: ");
 
-                    String taskName = scanner.nextLine();
+                        String taskName = scanner.nextLine();
 
-                    Task tempTask = MainBoard.findTask(taskName);
-                    tempTask = MainBoard.findTask(taskName);
+                        Task tempTask = MainBoard.findTask(taskName);
+                        tempTask = MainBoard.findTask(taskName);
 
-                    MainBoard.moveTask(tempTask);
+                        MainBoard.moveTask(tempTask);
 
-                    if (tempTask != null) {
-                        break;
+                        if (tempTask != null) {
+                            break;
+                        }
                     }
-                }
                     break;
                 case 4:
                     scanner.nextLine();
                     BoardPrinter.printBoard(MainBoard);
-                    while(true) {
+                    while (true) {
                         System.out.println("Please enther the name of task to remove: ");
 
                         String taskName = scanner.nextLine();
@@ -104,7 +104,7 @@ public class App {
         String taskCategory = scanner.nextLine();
         System.out.println("Enter the target date (dd/MM/yyyy HH:mm): ");
         String targetDate = scanner.nextLine();
-        if(!isDataValid(targetDate)) {
+        if (!isDataValid(targetDate)) {
             while (true) {
                 System.out.println("Invalid date format, try again:");
                 targetDate = scanner.nextLine();
@@ -129,37 +129,43 @@ public class App {
         System.out.println("[4] - Por categoria");
         System.out.println("[0] - Voltar");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        try {
 
-        switch (choice) {
-            case 1:
-                listTasks(board);
-                break;
-            case 2:
-                listTasksByStatus(board);
-                break;
-            case 3:
-                BoardPrinter.printSection("Tasks by priority", board.getTasksByPriority());
-                break;
-            case 4:
-                System.out.println("Enter category: ");
-                String category = scanner.nextLine();
-                BoardPrinter.printSection("Category: " + category, board.getTasksByCategory(category));
-                break;
-            case 0:
-                break;
-            default:
-                System.out.println("Wrong choice");
-                break;
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    listTasks(board);
+                    break;
+                case 2:
+                    listTasksByStatus(board);
+                    break;
+                case 3:
+                    BoardPrinter.printSection("Tasks by priority", board.getTasksByPriority());
+                    break;
+                case 4:
+                    System.out.println("Enter category: ");
+                    String category = scanner.nextLine();
+                    BoardPrinter.printSection("Category: " + category, board.getTasksByCategory(category));
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Wrong choice");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine(); // Clear the invalid input
         }
     }
 
     public static void listTasksByStatus(Board board) {
         System.out.println("Escolha o status");
-        System.out.println("[1] - To Do");
+        System.out.println("[1] - ToDo");
         System.out.println("[2] - Doing");
-        System.out.println("[3] - DOne");
+        System.out.println("[3] - Done");
         System.out.println("[0] - Voltar");
 
         int choice = scanner.nextInt();
@@ -167,13 +173,13 @@ public class App {
 
         switch (choice) {
             case 1:
-                BoardPrinter.printSection("To Do", board.getTasksByStatus("To Do"));
+                BoardPrinter.printSection("ToDo", board.getTasksByStatus("ToDo"));
                 break;
             case 2:
                 BoardPrinter.printSection("Doing", board.getTasksByStatus("Doing"));
                 break;
             case 3:
-                BoardPrinter.printSection("DOne", board.getTasksByStatus("DOne"));
+                BoardPrinter.printSection("Done", board.getTasksByStatus("Done"));
                 break;
             case 0:
                 break;
@@ -184,12 +190,7 @@ public class App {
     }
 
     public static void listTasks(Board board) {
-        // Acessando o HashMap que está dentro do objeto board
-        for (Map.Entry<String, ArrayList<Task>> entry : board.getTasks().entrySet()) {
-            String nomeSecao = entry.getKey();         // Ex: "tasksTodo"
-            ArrayList<Task> listaTarefas = entry.getValue(); // A lista de tarefas
-            BoardPrinter.printSection(nomeSecao, listaTarefas);
-        }
+        BoardPrinter.printBoard(board);
     }
 
 

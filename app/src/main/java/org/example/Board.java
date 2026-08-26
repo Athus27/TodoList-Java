@@ -2,8 +2,6 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Board {
     private static int count_tasks = 0;
@@ -12,52 +10,76 @@ public class Board {
     private String title;
     private String description;
 
-    private ArrayList<Task> tasksTodo = new ArrayList<>();
-    private ArrayList<Task> tasksDoing = new ArrayList<>();
-    private ArrayList<Task> tasksDone = new ArrayList<>();
-    HashMap<String,ArrayList<Task>> tasks = new HashMap<>();
-
-
+    private ArrayList<Task> tasks = new ArrayList<>();
 
     public Board(int id, int priority, String title, String description) {
         this.id = id;
         this.priority = priority;
-
-        tasks.put("To Do",tasksTodo);
-        tasks.put("Doing",tasksDoing);
-        tasks.put("DOne",tasksDone);
     }
 
     public void addTask(Task task) {
-        tasksTodo.add(task);
+        tasks.add(task);
+        orderTasksBySection();
     }
 
     public void removeTask(Task task) {
-        for (ArrayList<Task> taskList : tasks.values()) {
-            if (taskList.remove(task)) {
-                return;
-            }
-        }
+        tasks.remove(task);
     }
 
     /**
      * Identifica em qual section esta a task e move para a sessão após ela
      * Todo->Doing->Done
      * Se a task estiver em done não é possível mover
+     *
      * @param task
      */
     public void moveTask(Task task) {
-        if (this.tasksTodo.contains(task)) {
-            this.tasksTodo.remove(task);
-            this.tasksDoing.add(task);
-            System.out.printf("Moving task %s from 'ToDo' to 'Doing'%n", task.getTitle());
-        } else if (tasksDoing.contains(task)) {
-            this.tasksDoing.remove(task);
-            this.tasksDone.add(task);
-            System.out.printf("Moving task %s from 'Doing' to 'Done'%n", task.getTitle());
 
+        switch (task.getSection()) {
+            case "ToDo":
+                task.setSection("Doing");
+                break;
+            case "Doing":
+                task.setSection("Done");
+                break;
+            default:
+                System.out.println("Impossível remover tarefa");
+                break;
         }
-        else System.out.println("Não é possível mover a task");
+        this.orderTasksBySection();
+
+    }
+
+    /**
+     * Ordena as tarefas primeiro por seção e, dentro de cada seção, por prioridade.
+     * A ordem das seções é definida pelo método sectionOrder.
+     */
+    private void orderTasksBySection() {
+        // Ordena primeiro por secao e, dentro de cada secao, por prioridade.
+        tasks.sort(
+                Comparator.comparingInt((Task task) -> sectionOrder(task.getSection()))
+                        .thenComparing(Comparator.comparingInt(Task::getPriority).reversed())
+        );
+
+    }
+
+
+    /**
+     * Define a ordem das seções para a ordenação.
+     * "ToDo" vem primeiro,
+     * seguido por "Doing"
+     * e depois "Done".
+     *
+     * @param section
+     * @return
+     */
+    private int sectionOrder(String section) {
+        return switch (section) {
+            case "ToDo" -> 1;
+            case "Doing" -> 2;
+            case "Done" -> 3;
+            default -> 4;
+        };
     }
 
     public static int getCount_tasks() {
@@ -101,45 +123,34 @@ public class Board {
     }
 
     public ArrayList<Task> getTasksTodo() {
-        return tasksTodo;
-    }
-
-    public void setTasksTodo(ArrayList<Task> tasksTodo) {
-        this.tasksTodo = tasksTodo;
+        ArrayList<Task> tasksToDo = new ArrayList<>();
+        for (Task currentTask : this.tasks) {
+            if (currentTask.getSection().equals("ToDo")) {
+                tasksToDo.add(currentTask);
+            }
+        }
+        return tasksToDo;
     }
 
     public ArrayList<Task> getTasksDoing() {
-        return tasksDoing;
-    }
-
-    public void setTasksDoing(ArrayList<Task> tasksDoing) {
-        this.tasksDoing = tasksDoing;
+        return getTasksBySection("Doing");
     }
 
     public ArrayList<Task> getTasksDone() {
-        return tasksDone;
+        return getTasksBySection("Done");
     }
 
-    public void setTasksDone(ArrayList<Task> tasksDone) {
-        this.tasksDone = tasksDone;
-    }
-
-    public HashMap<String, ArrayList<Task>> getTasks() {
+    public ArrayList<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(HashMap<String, ArrayList<Task>> tasks) {
+    public void setTasks(ArrayList<Task> tasks) {
         this.tasks = tasks;
+        orderTasksBySection();
     }
 
     public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> allTasks = new ArrayList<>();
-
-        for (ArrayList<Task> taskList : tasks.values()) {
-            allTasks.addAll(taskList);
-        }
-
-        return allTasks;
+        return new ArrayList<>(tasks);
     }
 
     public ArrayList<Task> getTasksByPriority() {
@@ -160,32 +171,33 @@ public class Board {
         return filteredTasks;
     }
 
-    public ArrayList<Task> getTasksByStatus(String status) {
-        ArrayList<Task> tasksByStatus = tasks.get(status);
+    public ArrayList<Task> getTasksBySection(String section) {
+        ArrayList<Task> filteredTasks = new ArrayList<>();
 
-        if (tasksByStatus == null) {
-            return new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getSection().equalsIgnoreCase(section)) {
+                filteredTasks.add(task);
+            }
         }
 
-        return new ArrayList<>(tasksByStatus);
+        return filteredTasks;
+    }
+
+    public ArrayList<Task> getTasksByStatus(String status) {
+        return getTasksBySection(status);
     }
 
     /**
-     * Dado um titulo de task, percorre o conjunto <SecName->section> em busca da tarefa
-     * Map não implementa a interface 'Iterable', ou seja, o for exig
+     * Dado um titulo de task, percorre a lista de tasks e retorna a task correspondente, caso exista. Se não encontrar, retorna null.
+     *
      * @param title
      * @return Task
      */
     public Task findTask(String title) {
-        for (Map.Entry<String, ArrayList<Task>> entry : tasks.entrySet()) {
-            String sectionName = entry.getKey();
-            ArrayList<Task> tasks = entry.getValue();
-            for (Task task : tasks) {
-                if (task.getTitle().equals(title)) {
-                    System.out.println("found task " + title + " on section " + sectionName);
-                    return task;
-                }
-
+        for (Task task : tasks) {
+            if (task.getTitle().equals(title)) {
+                System.out.println("found task " + title + " on section " + task.getSection());
+                return task;
             }
         }
         System.out.println("Task not found");
