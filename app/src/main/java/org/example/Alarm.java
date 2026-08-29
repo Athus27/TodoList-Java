@@ -2,6 +2,7 @@ package org.example;
 
 
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 public class Alarm implements Runnable {
     private final Board board;
@@ -24,9 +25,19 @@ public class Alarm implements Runnable {
 
     private void checkAlarms() {
         for (Task task : board.getTasks()) {
-            if (task.getAlarmTime() != null && !task.isAlarmTriggered() && !task.getSection().equals("Done") && LocalDateTime.now().isAfter(task.getAlarmTime())) {
-                trigger(task);
-                task.setAlarmTriggered(true);
+            if (task.getSection().equals("Done")) {
+                continue;
+            }
+
+            Iterator<LocalDateTime> iterator = task.getAlarmTimes().iterator();
+
+            while (iterator.hasNext()) {
+                LocalDateTime alarmTime = iterator.next();
+
+                if (!LocalDateTime.now().isBefore(alarmTime)) {
+                    trigger(task, alarmTime);
+                    iterator.remove();
+                }
             }
         }
     }
@@ -34,12 +45,13 @@ public class Alarm implements Runnable {
     /**
      * trigger: dispara o alarme para a tarefa especificada, exibindo informações relevantes no console.
      */
-    private void trigger(Task task) {
+    private void trigger(Task task, LocalDateTime alarmTime) {
         System.out.println("\n=== ALARME DE TAREFA ===");
         System.out.println("Tarefa: " + task.getTitle());
         System.out.println("Descricao: " + task.getDescription());
         System.out.println("Prioridade: " + task.getPriority());
         System.out.println("Termina em: " + task.getTarget_data());
+        System.out.println("Alarme configurado para: " + alarmTime);
         System.out.println("========================");
     }
 

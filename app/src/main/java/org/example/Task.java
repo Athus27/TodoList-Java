@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Task {
     private int id;
@@ -13,8 +14,7 @@ public class Task {
     private String description;
 
     private String target_data;
-    private LocalDateTime alarmTime;
-    private boolean alarmTriggered;
+    private ArrayList<LocalDateTime> alarmTimes = new ArrayList<>();
 
     private String category;
     private String section;
@@ -43,8 +43,6 @@ public class Task {
         this.target_data = target_data;
         this.category = category;
         this.section = section;
-        this.alarmTime = null;
-        this.alarmTriggered = false;
     }
 
     public int getId() {
@@ -103,19 +101,15 @@ public class Task {
         this.section = section;
     }
 
-    public LocalDateTime getAlarmTime() {
-        return alarmTime;
+    public ArrayList<LocalDateTime> getAlarmTimes() {
+        return alarmTimes;
     }
 
-    public void setAlarmTime(LocalDateTime alarmTime) {
-        this.alarmTime = alarmTime;
+    public void setAlarmTimes(ArrayList<LocalDateTime> alarmTimes) {
+        this.alarmTimes = alarmTimes;
     }
 
-    public boolean isAlarmTriggered() {
-        return alarmTriggered;
-    }
-
-    public void setAlarmTriggered(boolean alarmTriggered) {
-        this.alarmTriggered = alarmTriggered;
+    public void addAlarmTime(LocalDateTime alarmTime) {
+        alarmTimes.add(alarmTime);
     }
 }

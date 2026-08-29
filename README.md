@@ -7,10 +7,13 @@
 2. Listar tarefas por status, prioridade ou categoria.
 3. Mover tarefas entre os status ToDo, Doing e Done.
 4. Remover tarefas.
-5. Configurar Alarmes para tarefas
+5. Configurar um ou mais alarmes para tarefas.
 
 ## Alarme de tarefa
-Ao criar um alarme, o usuário **informa quantos minutos antes da tarefa ele deseja ser alertado sobre ela. Por exemplo, se ela termina em 26/08/2026 16:00 e o usuário informar '120' minutos,o alarme será configurado para '26/08/2026 14:00' **
+Ao criar um alarme, o usuário **informa quantos minutos antes da tarefa ele deseja ser alertado sobre ela**. Por exemplo, se a tarefa termina em `26/08/2026 16:00` e o usuário informar `120` minutos, o alarme será configurado para `26/08/2026 14:00`.
+
+Cada tarefa pode ter **mais de um alarme configurado**. A aplicação mantém uma lista de horários de alarme dentro da tarefa e verifica periodicamente se algum deles chegou ao horário definido. Quando o horário atual é maior ou igual ao horário do alarme, o aviso é exibido no console e esse alarme é removido da lista, evitando disparos repetidos.
+
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 > **Atenção**: tarefas concluidas com status `Done` não disparam alarmes.
@@ -18,8 +21,8 @@ Ao criar um alarme, o usuário **informa quantos minutos antes da tarefa ele des
 ## Estrutura principal
 
 - `App.java`: controla o menu principal e o fluxo de criação/listagem de alarmes.
-- `Task.java`: representa uma tarefa e armazena o horário do alarme.
-- `Alarm.java`: verifica periodicamente se algum alarme deve ser disparado.
+- `Task.java`: representa uma tarefa e armazena a lista de horários de alarme.
+- `Alarm.java`: verifica periodicamente se algum alarme deve ser disparado e remove os alarmes já acionados.
 - `Board.java`: mantém e organiza as tarefas.
 - `BoardPrinter.java`: centraliza a impressão das tarefas no console.
 
@@ -51,10 +54,9 @@ app/src/main/java/  Estrutura geral do projeto
 
 - `App`: ponto de entrada da aplicação e responsável pelo fluxo principal do menu.
 - `Board`: representa o quadro de tarefas e gerencia adição, remoção, busca, listagem e movimentação das tasks.
-- `Task`: representa uma tarefa, incluindo título, descrição, prioridade, categoria, status, data de término e alarme.
-- `Alarm`: verifica periodicamente se alguma tarefa possui alarme no horário definido e dispara o aviso no console.
+- `Task`: representa uma tarefa, incluindo título, descrição, prioridade, categoria, status, data de término e lista de alarmes.
+- `Alarm`: verifica periodicamente se alguma tarefa possui alarmes vencidos e dispara o aviso no console.
 - `BoardPrinter`: centraliza a exibição das tarefas no terminal.
-
 
 
 

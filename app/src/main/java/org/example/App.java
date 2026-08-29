@@ -264,11 +264,6 @@ public class App {
                     return;
                 }
 
-                if (task.getAlarmTime() != null) {
-                    System.out.println("Ja existe um alarme para essa tarefa:\n" + task.getAlarmTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-                    return;
-                }
-
                 if (task.getSection().equals("Done")) {
                     System.out.println("Não é possível adicionar alarme para tarefas concluídas.");
                     return;
@@ -289,7 +284,7 @@ public class App {
                 LocalDateTime alarmTime = targetDate.minusMinutes(minutesBefore);
 
                 if (isDataValid(alarmTime)) {
-                    task.setAlarmTime(alarmTime);
+                    task.addAlarmTime(alarmTime);
                     System.out.println("Alarme configurado para: " + alarmTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
                 } else {
                     System.out.println("Alarme não pode ser configurado para uma data passada.");
@@ -300,8 +295,11 @@ public class App {
                 boolean hasAlarms = false;
                 // Listar alarmes
                 for (Task currentTask : board.getAllTasks()) {
-                    if (currentTask.getAlarmTime() != null) {
+                    if (!currentTask.getAlarmTimes().isEmpty()) {
                         BoardPrinter.printTask(currentTask);
+                        for (LocalDateTime currentAlarmTime : currentTask.getAlarmTimes()) {
+                            System.out.println("\t\tAlarme: " + currentAlarmTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                        }
                         hasAlarms = true;
                     }
                 }
