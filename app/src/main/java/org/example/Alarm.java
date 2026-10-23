@@ -22,6 +22,8 @@ public class Alarm implements Runnable {
             waitForAlarm();
         }
     }
+//padrões de projeto e arquitetura de sistemas
+
 
     private void checkAlarms() {
         for (Task task : board.getTasks()) {
